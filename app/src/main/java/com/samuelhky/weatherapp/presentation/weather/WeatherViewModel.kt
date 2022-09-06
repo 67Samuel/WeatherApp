@@ -55,4 +55,10 @@ class WeatherViewModel @Inject constructor(
             }
         }
     }
+
+    override fun toString(): String {
+        return "WeatherViewModel(state=$state)"
+    }
+
+
 }

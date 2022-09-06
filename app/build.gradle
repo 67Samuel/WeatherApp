@@ -11,7 +11,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.plcoding.weatherapp"
+        applicationId "com.samuelhky.weatherapp"
         minSdk 21
         targetSdk 32
         versionCode 1
@@ -84,7 +84,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:20.0.0'
 
     // Google Maps
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.maps.android:maps-compose:2.5.3'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
 
     // Compose Destination
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.5.17-beta")

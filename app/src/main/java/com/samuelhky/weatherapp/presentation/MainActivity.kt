@@ -14,7 +14,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.dependency
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
@@ -46,36 +48,13 @@ class MainActivity : ComponentActivity() {
         ))
         setContent {
             WeatherAppTheme {
-//                DestinationsNavHost(navGraph = NavGraphs.root)
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(DarkBlue)
-                    ) {
-                        WeatherCard(
-                            state = viewModel.state,
-                            backgroundColor = DeepBlue
-                        )
-                        Log.d(TAG, "WeatherScreen: weatherCard created")
-                        Spacer(modifier = Modifier.height(16.dp))
-                        WeatherForecast(state = viewModel.state)
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    // To tie WeatherViewModel to the activity, making it available to all destinations
+                    dependenciesContainerBuilder = {
+                        dependency(hiltViewModel<WeatherViewModel>(this@MainActivity))
                     }
-                    if (viewModel.state.isLoading)
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            color = DeepBlue
-                        )
-
-                    viewModel.state.error?.let { error ->
-                        ErrorCard(
-                            message = error,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
+                )
             }
         }
     }

@@ -155,4 +155,9 @@ sealed class WeatherType(
             }
         }
     }
+
+    override fun toString(): String {
+        return "WeatherType(weatherDesc='$weatherDesc')"
+    }
+
 }

@@ -2,6 +2,7 @@ package com.samuelhky.weatherapp.presentation.weather
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -11,7 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.ErrorCard
+import com.samuelhky.weatherapp.presentation.destinations.MapScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 
@@ -21,9 +24,9 @@ private val TAG: String = "WeatherScreenDebug"
 @Destination
 @Composable
 fun WeatherScreen(
-    viewModel: WeatherViewModel = hiltViewModel()
+    viewModel: WeatherViewModel,
+    navigator: DestinationsNavigator
 ) {
-    Log.d(TAG, "WeatherScreen: called")
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -34,9 +37,11 @@ fun WeatherScreen(
         ) {
             WeatherCard(
                 state = viewModel.state,
-                backgroundColor = DeepBlue
+                backgroundColor = DeepBlue,
+                modifier = Modifier.clickable {
+                    navigator.navigate(MapScreenDestination)
+                }
             )
-            Log.d(TAG, "WeatherScreen: weatherCard created")
             Spacer(modifier = Modifier.height(16.dp))
             WeatherForecast(state = viewModel.state)
         }
