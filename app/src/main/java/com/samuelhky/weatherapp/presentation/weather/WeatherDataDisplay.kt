@@ -14,6 +14,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
+/**
+ * The little packets of info at the bottom of the (main) WeatherCard
+ */
 @Composable
 fun WeatherDataDisplay(
     value: Int,

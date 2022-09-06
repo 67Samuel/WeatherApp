@@ -1,5 +1,6 @@
 package com.samuelhky.weatherapp.presentation.weather
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,8 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// We don't use use-cases/interactors here because that would be too much complexity for a simple app like this
+private val TAG: String = "WeatherViewModelDebug"
 
+// We don't use use-cases/interactors here because that would be too much complexity for a simple app like this
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository,
@@ -24,6 +26,7 @@ class WeatherViewModel @Inject constructor(
         private set // only this ViewModel can edit this state
 
     fun loadWeatherInfo() {
+        Log.d(TAG, "loadWeatherInfo: loading weather info")
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
@@ -37,19 +40,20 @@ class WeatherViewModel @Inject constructor(
                     )
                     return@launch
                 } else {
-                    assert(location.data != null)
-                    state = when (val result = repository.getWeatherData(
-                        long = location.data!!.longitude,
-                        lat = location.data.latitude)
-                    ) {
-                        is Resource.Success -> state.copy(
-                            isLoading = false,
-                            weatherInfo = result.data
-                        )
-                        is Resource.Error -> state.copy(
-                            isLoading = false,
-                            error = result.message
-                        )
+                    location.data?.let {
+                        state = when (val result = repository.getWeatherData(
+                            long = it.longitude,
+                            lat = it.latitude)
+                        ) {
+                            is Resource.Success -> state.copy(
+                                isLoading = false,
+                                weatherInfo = result.data
+                            )
+                            is Resource.Error -> state.copy(
+                                isLoading = false,
+                                error = result.message
+                            )
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@ import com.samuelhky.weatherapp.data.remote.WeatherDto
 import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.domain.weather.WeatherInfo
 import com.samuelhky.weatherapp.domain.weather.WeatherType
+import com.samuelhky.weatherapp.util.getCurrentHour
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter.ISO_DATE_TIME
@@ -43,12 +44,10 @@ fun WeatherDataDto.toWeatherDataMap(): Map<Int, List<WeatherData>> {
 }
 
 fun WeatherDto.toWeatherInfo(): WeatherInfo {
-    Log.d(TAG, "toWeatherInfo: raw weatherData retrieved: $weatherData")
     val weatherDataMap = weatherData.toWeatherDataMap()
     val now = LocalTime.now()
-    val currentWeatherData = if (now.hour == 23 && now.minute > 30) weatherDataMap[0]?.get(0) else weatherDataMap[0]?.find {
-        val hour = if (now.minute < 30) now.hour else now.hour + 1
-        it.time.hour == hour
+    val currentWeatherData = if (now.hour == 23 && now.minute > 30) weatherDataMap[1]?.get(0) else weatherDataMap[0]?.find {
+        it.time.hour == getCurrentHour()
     }
     return WeatherInfo(
         weatherDataPerDay = weatherDataMap,

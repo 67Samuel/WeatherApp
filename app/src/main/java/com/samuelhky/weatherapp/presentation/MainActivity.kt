@@ -33,6 +33,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestPermissions()
+        setContent {
+            WeatherAppTheme {
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    // To tie WeatherViewModel to the activity, making it available to all destinations
+                    dependenciesContainerBuilder = {
+                        dependency(hiltViewModel<WeatherViewModel>(this@MainActivity))
+                    }
+                )
+            }
+        }
+    }
+
+    private fun requestPermissions() {
         // create a contract for requesting permissions
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -46,16 +61,5 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ))
-        setContent {
-            WeatherAppTheme {
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    // To tie WeatherViewModel to the activity, making it available to all destinations
-                    dependenciesContainerBuilder = {
-                        dependency(hiltViewModel<WeatherViewModel>(this@MainActivity))
-                    }
-                )
-            }
-        }
     }
 }
