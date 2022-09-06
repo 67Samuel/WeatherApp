@@ -27,7 +27,6 @@ fun WeatherCard(
     modifier: Modifier = Modifier
 ) {
     // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
-
     state.weatherInfo?.currentWeatherData?.let { data ->
         val formattedTime = remember(data) {
             data.time.format(
@@ -57,11 +56,13 @@ fun WeatherCard(
                     modifier = Modifier.width(200.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "${data.temperatureCelsius}°C",
-                    fontSize = 50.sp,
-                    color = Color.White
-                )
+                data.temperatureCelsius?.let {
+                    Text(
+                        text = "${it}°C",
+                        fontSize = 50.sp,
+                        color = Color.White
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = data.weatherType.weatherDesc,
@@ -73,27 +74,33 @@ fun WeatherCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    WeatherDataDisplay(
-                        value = data.pressure.roundToInt(),
-                        unit = "hpa",
-                        icon = ImageVector.vectorResource(id = drawable.ic_pressure),
-                        iconTint = Color.White,
-                        textStyle = TextStyle(color = Color.White)
-                    )
-                    WeatherDataDisplay(
-                        value = data.humidity.roundToInt(),
-                        unit = "%",
-                        icon = ImageVector.vectorResource(id = drawable.ic_drop),
-                        iconTint = Color.White,
-                        textStyle = TextStyle(color = Color.White)
-                    )
-                    WeatherDataDisplay(
-                        value = data.windSpeed.roundToInt(),
-                        unit = "km/h",
-                        icon = ImageVector.vectorResource(id = drawable.ic_wind),
-                        iconTint = Color.White,
-                        textStyle = TextStyle(color = Color.White)
-                    )
+                    data.pressure?.let {
+                        WeatherDataDisplay(
+                            value = it.roundToInt(),
+                            unit = "hpa",
+                            icon = ImageVector.vectorResource(id = drawable.ic_pressure),
+                            iconTint = Color.White,
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                    }
+                    data.humidity?.let {
+                        WeatherDataDisplay(
+                            value = it.roundToInt(),
+                            unit = "%",
+                            icon = ImageVector.vectorResource(id = drawable.ic_drop),
+                            iconTint = Color.White,
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                    }
+                    data.windSpeed?.let {
+                        WeatherDataDisplay(
+                            value = it.roundToInt(),
+                            unit = "km/h",
+                            icon = ImageVector.vectorResource(id = drawable.ic_wind),
+                            iconTint = Color.White,
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                    }
                 }
             }
         }

@@ -43,10 +43,12 @@ fun HourlyWeatherDisplay(
             contentDescription = weatherData.weatherType.weatherDesc,
             modifier = Modifier.width(40.dp)
         )
-        Text(
-            text = "${weatherData.temperatureCelsius}°C",
-            fontWeight = FontWeight.Bold,
-            color = textColor
-        )
+        weatherData.temperatureCelsius?.let {
+            Text(
+                text = "${it}°C",
+                fontWeight = FontWeight.Bold,
+                color = textColor
+            )
+        }
     }
 }

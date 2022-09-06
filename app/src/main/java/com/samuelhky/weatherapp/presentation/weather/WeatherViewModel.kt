@@ -39,8 +39,8 @@ class WeatherViewModel @Inject constructor(
                 } else {
                     assert(location.data != null)
                     state = when (val result = repository.getWeatherData(
-                        long = location.data?.longitude ?: 0.0,
-                        lat = location.data?.latitude ?: 0.0)
+                        long = location.data!!.longitude,
+                        lat = location.data.latitude)
                     ) {
                         is Resource.Success -> state.copy(
                             isLoading = false,

@@ -2,6 +2,7 @@ package com.samuelhky.weatherapp.presentation
 
 import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -19,6 +20,8 @@ import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
 import com.samuelhky.weatherapp.presentation.weather.*
 import dagger.hilt.android.AndroidEntryPoint
+
+private val TAG: String = "MainActivityDebug"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -43,7 +46,36 @@ class MainActivity : ComponentActivity() {
         ))
         setContent {
             WeatherAppTheme {
-                DestinationsNavHost(navGraph = NavGraphs.root)
+//                DestinationsNavHost(navGraph = NavGraphs.root)
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(DarkBlue)
+                    ) {
+                        WeatherCard(
+                            state = viewModel.state,
+                            backgroundColor = DeepBlue
+                        )
+                        Log.d(TAG, "WeatherScreen: weatherCard created")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        WeatherForecast(state = viewModel.state)
+                    }
+                    if (viewModel.state.isLoading)
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = DeepBlue
+                        )
+
+                    viewModel.state.error?.let { error ->
+                        ErrorCard(
+                            message = error,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                }
             }
         }
     }

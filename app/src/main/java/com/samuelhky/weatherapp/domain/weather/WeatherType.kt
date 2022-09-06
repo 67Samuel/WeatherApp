@@ -115,9 +115,13 @@ sealed class WeatherType(
         weatherDesc = "Thunderstorm with heavy hail",
         iconRes = R.drawable.ic_rainythunder
     )
+    object Unknown: WeatherType(
+        weatherDesc = "Unable to retrieve data",
+        iconRes = R.drawable.ic_unknown
+    )
 
     companion object {
-        fun fromWMO(code: Int): WeatherType {
+        fun fromWMO(code: Int?): WeatherType {
             return when(code) {
                 0 -> ClearSky
                 1 -> MainlyClear
@@ -147,7 +151,7 @@ sealed class WeatherType(
                 95 -> ModerateThunderstorm
                 96 -> SlightHailThunderstorm
                 99 -> HeavyHailThunderstorm
-                else -> ClearSky
+                else -> Unknown
             }
         }
     }
