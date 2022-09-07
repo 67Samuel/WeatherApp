@@ -1,6 +1,7 @@
 package com.samuelhky.weatherapp.data.location
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ class DefaultLocationTracker @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
     private val application: Application
 ): LocationTracker {
+    @SuppressLint("MissingPermission")
     override suspend fun getCurrentLocation(): Resource<Location> {
         val hasAccessFineLocationPermission = ContextCompat.checkSelfPermission(
             application,
