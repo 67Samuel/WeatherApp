@@ -60,6 +60,28 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
+    fun loadWeatherInfo(lat: Double, long: Double) {
+        viewModelScope.launch {
+            state = state.copy(
+                isLoading = true,
+                error = null,
+            )
+            state = when (val result = repository.getWeatherData(
+                lat = lat,
+                long = long)
+            ) {
+                is Resource.Success -> state.copy(
+                    isLoading = false,
+                    weatherInfo = result.data
+                )
+                is Resource.Error -> state.copy(
+                    isLoading = false,
+                    error = result.message
+                )
+            }
+        }
+    }
+
     override fun toString(): String {
         return "WeatherViewModel(state=$state)"
     }

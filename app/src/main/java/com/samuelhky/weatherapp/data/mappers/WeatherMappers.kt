@@ -2,7 +2,6 @@
 
 package com.samuelhky.weatherapp.data.mappers
 
-import android.util.Log
 import com.samuelhky.weatherapp.data.remote.WeatherDataDto
 import com.samuelhky.weatherapp.data.remote.WeatherDto
 import com.samuelhky.weatherapp.domain.weather.WeatherData

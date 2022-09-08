@@ -31,6 +31,7 @@ fun WeatherCard(
     backgroundColor: Color,
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
+    locationName: String?,
 ) {
     // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
     weatherData?.let { data ->
@@ -61,20 +62,24 @@ fun WeatherCard(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        Card(
-                            backgroundColor = TranslucentWhite,
-                            shape = RoundedCornerShape(5.dp)
+                        Box(
+                            modifier = Modifier.fillMaxWidth(0.75f)
                         ) {
-                            Text(
-                                text = "Tanglin",
-                                color = Color.White,
-                                fontSize = 23.sp,
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .clickable {
-                                        navigator.navigate(MapScreenDestination)
-                                    }
-                            )
+                            Card(
+                                backgroundColor = TranslucentWhite,
+                                shape = RoundedCornerShape(5.dp),
+                            ) {
+                                Text(
+                                    text = locationName ?: "Unknown",
+                                    color = Color.White,
+                                    fontSize = 23.sp,
+                                    modifier = Modifier
+                                        .padding(5.dp)
+                                        .clickable {
+                                            navigator.navigate(MapScreenDestination())
+                                        }
+                                )
+                            }
                         }
                         Text(
                             text = formattedTime,

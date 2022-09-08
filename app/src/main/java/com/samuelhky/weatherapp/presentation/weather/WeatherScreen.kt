@@ -22,7 +22,8 @@ private val TAG: String = "WeatherScreenDebug"
 @Composable
 fun WeatherScreen(
     viewModel: WeatherViewModel,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    locationName: String?
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -39,7 +40,8 @@ fun WeatherScreen(
                 // mainWeatherData tends to be null at first but not viewModel.state.weatherInfo?.currentWeatherData for some reason
                 weatherData = mainWeatherData ?: viewModel.state.weatherInfo?.currentWeatherData,
                 backgroundColor = DeepBlue,
-                navigator = navigator
+                navigator = navigator,
+                locationName = locationName
             )
             Spacer(modifier = Modifier.height(16.dp))
             WeatherForecast(

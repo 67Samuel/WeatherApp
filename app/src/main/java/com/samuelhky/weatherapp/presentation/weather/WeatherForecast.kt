@@ -35,7 +35,6 @@ fun WeatherForecast(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .padding(bottom = 16.dp)
         ) {
             Text(
                 text = "Today",
