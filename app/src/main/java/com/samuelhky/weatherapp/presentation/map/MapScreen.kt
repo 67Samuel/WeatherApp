@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +27,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.destinations.WeatherScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
-import com.samuelhky.weatherapp.util.getLocationName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -38,18 +36,15 @@ private val TAG: String = "MapScreenDebug"
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
-    lat: Double = 1.35,
-    long: Double = 103.87,
     viewModel: MainViewModel,
     navigator: DestinationsNavigator
 ) {
-    val currentLocation = LatLng(lat, long)
+    val currentLocation = LatLng(viewModel.state.lat, viewModel.state.long)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentLocation, 15f)
     }
     var createMarker by remember { mutableStateOf<LatLng?>(null) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,9 +76,6 @@ fun MapScreen(
                             lat = it.latitude,
                             long = it.longitude
                         )
-//                        navigator.navigate(WeatherScreenDestination(
-//                            locationName = getLocationName(it.latitude, it.longitude, context)
-//                        ))
                         viewModel.updateLocation(it.latitude, it.longitude)
                         navigator.navigate(WeatherScreenDestination)
                     }

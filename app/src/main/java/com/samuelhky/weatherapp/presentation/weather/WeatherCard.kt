@@ -1,10 +1,12 @@
 package com.samuelhky.weatherapp.presentation.weather
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,7 +33,7 @@ fun WeatherCard(
     backgroundColor: Color,
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
-    locationName: String,
+    locationName: String
 ) {
     // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
     weatherData?.let { data ->
@@ -62,22 +64,30 @@ fun WeatherCard(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        Box(
+                        Card(
+                            backgroundColor = TranslucentWhite,
+                            shape = RoundedCornerShape(5.dp),
                             modifier = Modifier.fillMaxWidth(0.75f)
                         ) {
-                            Card(
-                                backgroundColor = TranslucentWhite,
-                                shape = RoundedCornerShape(5.dp),
+                            Row(
+                                modifier = Modifier.padding(5.dp)
                             ) {
                                 Text(
                                     text = locationName,
                                     color = Color.White,
                                     fontSize = 23.sp,
                                     modifier = Modifier
-                                        .padding(5.dp)
+                                        .weight(1f)
+                                        .padding(end = 5.dp)
                                         .clickable {
                                             navigator.navigate(MapScreenDestination())
                                         }
+                                )
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = drawable.ic_location_searching),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
                                 )
                             }
                         }

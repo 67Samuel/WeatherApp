@@ -19,10 +19,10 @@ fun getLocationName(lat: Double, long: Double, context: Context): String {
             Geocoder(context).getFromLocation(lat, long, 1)
         if (locationList.isNotEmpty()) {
             locationList[0].apply {
-                if (thoroughfare != null && countryName != null)
-                    name = "${locationList[0].thoroughfare}, ${locationList[0].countryName}"
+                if (thoroughfare != null && countryCode != null)
+                    name = "${locationList[0].thoroughfare}, ${locationList[0].countryCode}"
                 else if (thoroughfare != null)
-                    name = locationList[0].countryName
+                    name = locationList[0].countryCode
             }
         }
     }
