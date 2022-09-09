@@ -27,8 +27,7 @@ private val TAG: String = "WeatherScreenDebug"
 @Composable
 fun WeatherScreen(
     viewModel: MainViewModel,
-    navigator: DestinationsNavigator,
-    locationName: String?,
+    navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
     Box(
@@ -47,7 +46,7 @@ fun WeatherScreen(
                     weatherData = mainWeatherData,
                     backgroundColor = DeepBlue,
                     navigator = navigator,
-                    locationName = locationName ?: getLocationName(
+                    locationName = getLocationName(
                         lat = viewModel.state.lat,
                         long = viewModel.state.long,
                         context = context

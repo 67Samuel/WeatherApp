@@ -31,7 +31,7 @@ fun WeatherCard(
     backgroundColor: Color,
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
-    locationName: String?,
+    locationName: String,
 ) {
     // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
     weatherData?.let { data ->
@@ -70,7 +70,7 @@ fun WeatherCard(
                                 shape = RoundedCornerShape(5.dp),
                             ) {
                                 Text(
-                                    text = locationName ?: "Unknown",
+                                    text = locationName,
                                     color = Color.White,
                                     fontSize = 23.sp,
                                     modifier = Modifier

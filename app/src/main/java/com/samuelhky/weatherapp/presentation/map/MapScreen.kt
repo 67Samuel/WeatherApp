@@ -81,9 +81,11 @@ fun MapScreen(
                             lat = it.latitude,
                             long = it.longitude
                         )
-                        navigator.navigate(WeatherScreenDestination(
-                            locationName = getLocationName(it.latitude, it.longitude, context)
-                        ))
+//                        navigator.navigate(WeatherScreenDestination(
+//                            locationName = getLocationName(it.latitude, it.longitude, context)
+//                        ))
+                        viewModel.updateLocation(it.latitude, it.longitude)
+                        navigator.navigate(WeatherScreenDestination)
                     }
                     // show snackbar and set location for text in weathercard
                 }
