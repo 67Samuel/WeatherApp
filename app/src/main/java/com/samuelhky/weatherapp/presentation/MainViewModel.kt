@@ -1,4 +1,4 @@
-package com.samuelhky.weatherapp.presentation.weather
+package com.samuelhky.weatherapp.presentation
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -9,24 +9,27 @@ import androidx.lifecycle.viewModelScope
 import com.samuelhky.weatherapp.domain.location.LocationTracker
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
+import com.samuelhky.weatherapp.presentation.weather.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private val TAG: String = "WeatherViewModelDebug"
+private val TAG: String = "MainViewModelDebug"
 
 // We don't use use-cases/interactors here because that would be too much complexity for a simple app like this
 @HiltViewModel
-class WeatherViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val repository: WeatherRepository,
     private val locationTracker: LocationTracker
 ): ViewModel() {
 
-    var state by mutableStateOf(WeatherState())
+    var state by mutableStateOf(MainState())
         private set // only this ViewModel can edit this state
 
+    /**
+     * Loads weather info using phone's location data
+     */
     fun loadWeatherInfo() {
-        Log.d(TAG, "loadWeatherInfo: loading weather info")
         viewModelScope.launch {
             state = state.copy(
                 isLoading = true,
@@ -45,10 +48,15 @@ class WeatherViewModel @Inject constructor(
                             long = it.longitude,
                             lat = it.latitude)
                         ) {
-                            is Resource.Success -> state.copy(
-                                isLoading = false,
-                                weatherInfo = result.data
-                            )
+                            is Resource.Success -> {
+                                Log.d(TAG, "loadWeatherInfo: weatherInfo: lat: ${it.latitude}\nlong: ${it.longitude}")
+                                state.copy(
+                                    isLoading = false,
+                                    weatherInfo = result.data,
+                                    lat = it.latitude,
+                                    long = it.longitude
+                                )
+                            }
                             is Resource.Error -> state.copy(
                                 isLoading = false,
                                 error = result.message
@@ -56,10 +64,14 @@ class WeatherViewModel @Inject constructor(
                         }
                     }
                 }
+                Log.d(TAG, "loadWeatherInfo: done loading weather info")
             }
         }
     }
 
+    /**
+     * Loads weather info using given lat and long
+     */
     fun loadWeatherInfo(lat: Double, long: Double) {
         viewModelScope.launch {
             state = state.copy(
@@ -72,7 +84,9 @@ class WeatherViewModel @Inject constructor(
             ) {
                 is Resource.Success -> state.copy(
                     isLoading = false,
-                    weatherInfo = result.data
+                    weatherInfo = result.data,
+                    lat = lat,
+                    long = long
                 )
                 is Resource.Error -> state.copy(
                     isLoading = false,
@@ -81,10 +95,11 @@ class WeatherViewModel @Inject constructor(
             }
         }
     }
-
-    override fun toString(): String {
-        return "WeatherViewModel(state=$state)"
+    fun updateLocation(lat: Double, long: Double) {
+        state = state.copy(lat = lat, long = long)
     }
 
-
+    override fun toString(): String {
+        return "MainViewModel(state=$state)"
+    }
 }

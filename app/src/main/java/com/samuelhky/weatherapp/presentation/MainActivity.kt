@@ -2,25 +2,15 @@ package com.samuelhky.weatherapp.presentation
 
 import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
-import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
-import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
-import com.samuelhky.weatherapp.presentation.weather.*
 import dagger.hilt.android.AndroidEntryPoint
 
 private val TAG: String = "MainActivityDebug"
@@ -28,7 +18,7 @@ private val TAG: String = "MainActivityDebug"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: WeatherViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +28,9 @@ class MainActivity : ComponentActivity() {
             WeatherAppTheme {
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
-                    // To tie WeatherViewModel to the activity, making it available to all destinations
+                    // To tie MainViewModel to the activity, making it available to all destinations
                     dependenciesContainerBuilder = {
-                        dependency(hiltViewModel<WeatherViewModel>(this@MainActivity))
+                        dependency(hiltViewModel<MainViewModel>(this@MainActivity))
                     }
                 )
             }

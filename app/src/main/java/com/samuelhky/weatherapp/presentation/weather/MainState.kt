@@ -2,12 +2,14 @@ package com.samuelhky.weatherapp.presentation.weather
 
 import com.samuelhky.weatherapp.domain.weather.WeatherInfo
 
-data class WeatherState(
+data class MainState(
     val weatherInfo: WeatherInfo? = null,
+    val lat: Double = 1.3521,
+    val long: Double = 103.8198,
     val isLoading: Boolean = false,
     val error: String? = null
 ) {
     override fun toString(): String {
-        return "WeatherState(weatherInfo=$weatherInfo, isLoading=$isLoading, error=$error)"
+        return "MainState(weatherInfo=$weatherInfo, lat=$lat, long=$long, isLoading=$isLoading, error=$error)"
     }
 }
