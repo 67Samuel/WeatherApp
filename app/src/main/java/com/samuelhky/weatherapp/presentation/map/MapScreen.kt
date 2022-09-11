@@ -8,26 +8,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.destinations.WeatherScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
-import kotlinx.coroutines.delay
+import com.samuelhky.weatherapp.util.getLocationName
 import kotlinx.coroutines.launch
 
 
@@ -39,11 +41,11 @@ fun MapScreen(
     viewModel: MainViewModel,
     navigator: DestinationsNavigator
 ) {
-    val currentLocation = LatLng(viewModel.state.lat, viewModel.state.long)
+    val selectedLocation = LatLng(viewModel.state.lat, viewModel.state.long)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(currentLocation, 15f)
+        position = CameraPosition.fromLatLngZoom(selectedLocation, 15f)
     }
-    var createMarker by remember { mutableStateOf<LatLng?>(null) }
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
@@ -69,9 +71,7 @@ fun MapScreen(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
                 onMapClick = {
-                    // set selectedLocation to remember
                     scope.launch {
-                        createMarker = it
                         viewModel.loadWeatherInfo(
                             lat = it.latitude,
                             long = it.longitude
@@ -79,111 +79,17 @@ fun MapScreen(
                         viewModel.updateLocation(it.latitude, it.longitude)
                         navigator.navigate(WeatherScreenDestination)
                     }
-                    // show snackbar and set location for text in weathercard
                 }
             ) {
-                MapMarker(
-                    location = currentLocation,
-                    title = "Current Location",
-                    iconColor = BitmapDescriptorFactory.HUE_RED
+                Marker(
+                    state = MarkerState(position = selectedLocation),
+                    title = "Selected Location",
+                    snippet = getLocationName(
+                        lat = viewModel.state.lat,
+                        long = viewModel.state.long,
+                        context = context
+                        )
                 )
-                createMarker?.let {
-                    MapMarker(
-                        location = it,
-                        title = "Selected Location",
-                        iconColor = BitmapDescriptorFactory.HUE_GREEN
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun MapScreen(
-    modifier: Modifier = Modifier,
-    lat: Double = 1.35,
-    long: Double = 103.87,
-) {
-    val currentLocation = LatLng(lat, long)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(currentLocation, 15f)
-    }
-    val west = LatLng(1.359973, 103.707467)
-    val north = LatLng(1.416948, 103.800164)
-    val northEast = LatLng(1.390177, 103.868142)
-    val east = LatLng(1.352765, 103.940240)
-    val central = LatLng(1.318099, 103.799477)
-
-    val createMarker by remember { mutableStateOf<LatLng?>(null) }
-    val scope = rememberCoroutineScope()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(DarkBlue)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Select location for weather report",
-            fontWeight = FontWeight.Bold,
-            fontSize = 23.sp,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-        Card(
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                onMapClick = {
-                    scope.launch {
-                        delay(1000)
-                    }
-                }
-            ) {
-                MapMarker(
-                    location = currentLocation,
-                    title = "Current Location",
-                    iconColor = BitmapDescriptorFactory.HUE_RED
-                )
-                MapMarker(
-                    location = west,
-                    title = "West",
-                    alpha = 0.7f
-                )
-                MapMarker(
-                    location = central,
-                    title = "Central",
-                    alpha = 0.7f
-                )
-                MapMarker(
-                    location = north,
-                    title = "North",
-                    alpha = 0.7f
-                )
-                MapMarker(
-                    location = northEast,
-                    title = "North East",
-                    alpha = 0.7f
-                )
-                MapMarker(
-                    location = east,
-                    title = "East",
-                    alpha = 0.7f
-                )
-                createMarker?.let {
-                    MapMarker(
-                        location = it,
-                        title = "Selected Location",
-                        iconColor = BitmapDescriptorFactory.HUE_GREEN
-                    )
-                }
             }
         }
     }
