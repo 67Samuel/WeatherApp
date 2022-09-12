@@ -71,7 +71,9 @@ fun WeatherScreen(
         viewModel.state.error?.let { error ->
             ErrorCard(
                 message = error,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth(0.5f)
             )
         }
     }
