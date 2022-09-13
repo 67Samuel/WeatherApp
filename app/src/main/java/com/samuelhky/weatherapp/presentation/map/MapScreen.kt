@@ -20,10 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
@@ -49,7 +46,6 @@ fun MapScreen(
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var createMarker by remember { mutableStateOf<LatLng?>(null) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -75,8 +71,6 @@ fun MapScreen(
                 cameraPositionState = cameraPositionState,
                 onMapClick = {
                     scope.launch {
-                        createMarker = it
-                        delay(500)
                         viewModel.loadWeatherInfo(
                             lat = it.latitude,
                             long = it.longitude
@@ -84,17 +78,12 @@ fun MapScreen(
                         viewModel.updateLocation(it.latitude, it.longitude)
                         navigator.navigate(WeatherScreenDestination)
                     }
-                }
+                },
+                properties = MapProperties(isMyLocationEnabled = true)
             ) {
-                createMarker?.let {
-                    Marker(
-                        state = MarkerState(position = it),
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                    )
-                }
                 Marker(
                     state = MarkerState(position = selectedLocation),
-                    title = "Current Location",
+                    title = "Selected Location",
                     snippet = getLocationName(
                         lat = viewModel.state.lat,
                         long = viewModel.state.long,

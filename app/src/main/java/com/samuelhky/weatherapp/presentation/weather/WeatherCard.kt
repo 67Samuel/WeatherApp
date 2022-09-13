@@ -1,15 +1,16 @@
 package com.samuelhky.weatherapp.presentation.weather
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.R.drawable
 import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.presentation.destinations.MapScreenDestination
+import com.samuelhky.weatherapp.presentation.ui.theme.SelectionGreen
 import com.samuelhky.weatherapp.presentation.ui.theme.TranslucentWhite
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -35,6 +37,16 @@ fun WeatherCard(
     navigator: DestinationsNavigator,
     locationName: String
 ) {
+    var locationColorState by remember { mutableStateOf(Color.Unspecified) }
+    val locationColor by animateColorAsState(
+        targetValue = locationColorState,
+        animationSpec = keyframes {
+            durationMillis = 2000
+            SelectionGreen at 0
+            SelectionGreen at 1500 with FastOutSlowInEasing
+            locationColorState at 2000
+        }
+    )
     // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
     weatherData?.let { data ->
         val formattedTime = remember(data) {
@@ -74,7 +86,7 @@ fun WeatherCard(
                             ) {
                                 Text(
                                     text = locationName,
-                                    color = Color.White,
+                                    color = locationColor,
                                     fontSize = 23.sp,
                                     modifier = Modifier
                                         .weight(1f)
@@ -155,6 +167,7 @@ fun WeatherCard(
                 }
             }
         }
+        locationColorState = Color.White // animate location text
     }
 
 }
