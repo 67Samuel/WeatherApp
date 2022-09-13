@@ -7,9 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
+import com.ramcosta.composedestinations.spec.NavHostEngine
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,17 +27,22 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
 
+    @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPermissions()
         setContent {
             WeatherAppTheme {
+                val navController: NavHostController = rememberAnimatedNavController()
+                val navHostEngine: NavHostEngine = rememberAnimatedNavHostEngine()
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
                     // To tie MainViewModel to the activity, making it available to all destinations
                     dependenciesContainerBuilder = {
                         dependency(hiltViewModel<MainViewModel>(this@MainActivity))
-                    }
+                    },
+                    engine = navHostEngine,
+                    navController = navController
                 )
             }
         }

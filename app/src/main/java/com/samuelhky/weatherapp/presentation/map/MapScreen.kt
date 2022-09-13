@@ -29,13 +29,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.destinations.WeatherScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
+import com.samuelhky.weatherapp.util.ScreenTransitions
 import com.samuelhky.weatherapp.util.getLocationName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 private val TAG: String = "MapScreenDebug"
-@Destination
+@Destination(style = ScreenTransitions::class)
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
@@ -50,7 +51,7 @@ fun MapScreen(
     val scope = rememberCoroutineScope()
     var createMarker by remember { mutableStateOf<LatLng?>(null) }
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(DarkBlue)
             .padding(16.dp),
