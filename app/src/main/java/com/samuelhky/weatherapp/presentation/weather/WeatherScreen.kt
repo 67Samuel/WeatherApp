@@ -29,9 +29,6 @@ fun WeatherScreen(
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -60,20 +57,4 @@ fun WeatherScreen(
                 }
             }
         }
-
-        if (viewModel.state.isLoading)
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = DeepBlue
-            )
-
-        viewModel.state.error?.let { error ->
-            ErrorCard(
-                message = error,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth(0.5f)
-            )
-        }
-    }
 }

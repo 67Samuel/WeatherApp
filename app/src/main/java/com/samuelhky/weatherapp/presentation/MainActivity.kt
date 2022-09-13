@@ -8,6 +8,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -16,6 +22,7 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.spec.NavHostEngine
+import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,6 +51,21 @@ class MainActivity : ComponentActivity() {
                     engine = navHostEngine,
                     navController = navController
                 )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (viewModel.state.isLoading)
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = DeepBlue
+                        )
+                    viewModel.state.error?.let { error ->
+                        ErrorCard(
+                            message = error,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .fillMaxWidth(0.5f)
+                        )
+                    }
+                }
             }
         }
     }
