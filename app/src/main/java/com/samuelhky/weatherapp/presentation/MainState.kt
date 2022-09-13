@@ -1,4 +1,4 @@
-package com.samuelhky.weatherapp.presentation.weather
+package com.samuelhky.weatherapp.presentation
 
 import com.samuelhky.weatherapp.domain.weather.WeatherInfo
 

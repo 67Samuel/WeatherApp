@@ -17,18 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
-import com.samuelhky.weatherapp.presentation.destinations.WeatherScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
-import com.samuelhky.weatherapp.util.ScreenTransitions
+import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 import com.samuelhky.weatherapp.util.getLocationName
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -76,7 +73,7 @@ fun MapScreen(
                             long = it.longitude
                         )
                         viewModel.updateLocation(it.latitude, it.longitude)
-                        navigator.navigate(WeatherScreenDestination)
+                        navigator.popBackStack()
                     }
                 },
                 properties = MapProperties(isMyLocationEnabled = true)

@@ -12,8 +12,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +31,7 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.spec.NavHostEngine
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
+import com.samuelhky.weatherapp.util.ui.BackPressHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -45,29 +51,34 @@ class MainActivity : ComponentActivity() {
             requestForPermissions()
         setContent {
             WeatherAppTheme {
-                val navController: NavHostController = rememberAnimatedNavController()
-                val navHostEngine: NavHostEngine = rememberAnimatedNavHostEngine()
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    // To tie MainViewModel to the activity, making it available to all destinations
-                    dependenciesContainerBuilder = {
-                        dependency(hiltViewModel<MainViewModel>(this@MainActivity))
-                    },
-                    engine = navHostEngine,
-                    navController = navController
-                )
-                // Loading and error UI handling
-                Box(modifier = Modifier.fillMaxSize()) {
-                    if (viewModel.state.isLoading)
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            color = DeepBlue
-                        )
-                    viewModel.state.error?.let { error ->
-                        ShowError(
-                            message = error,
-                            modifier = Modifier.fillMaxSize()
-                        )
+                val scaffoldState = rememberScaffoldState()
+                Scaffold(
+                    scaffoldState = scaffoldState,
+                    backgroundColor = Color.Transparent
+                ) {
+                    val navController: NavHostController = rememberAnimatedNavController()
+                    val navHostEngine: NavHostEngine = rememberAnimatedNavHostEngine()
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        // To tie MainViewModel to the activity, making it available to all destinations
+                        dependenciesContainerBuilder = {
+                            dependency(hiltViewModel<MainViewModel>(this@MainActivity))
+                        },
+                        engine = navHostEngine,
+                        navController = navController
+                    )
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        if (viewModel.state.isLoading)
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.Center),
+                                color = DeepBlue
+                            )
+                        viewModel.state.error?.let { error ->
+                            LaunchedEffect(true) {
+                                scaffoldState.snackbarHostState.showSnackbar(error)
+                            }
+                        }
                     }
                 }
             }

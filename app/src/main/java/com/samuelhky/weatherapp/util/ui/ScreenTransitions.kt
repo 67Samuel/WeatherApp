@@ -1,4 +1,4 @@
-package com.samuelhky.weatherapp.util
+package com.samuelhky.weatherapp.util.ui
 
 import androidx.compose.animation.*
 import androidx.navigation.NavBackStackEntry

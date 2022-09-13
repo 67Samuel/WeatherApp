@@ -1,5 +1,6 @@
 package com.samuelhky.weatherapp.presentation.weather
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -12,9 +13,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
-import com.samuelhky.weatherapp.util.ScreenTransitions
+import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 import com.samuelhky.weatherapp.util.getCurrentHour
 import com.samuelhky.weatherapp.util.getLocationName
+import com.samuelhky.weatherapp.util.ui.BackPressHandler
 
 private val TAG: String = "WeatherScreenDebug"
 
@@ -26,32 +28,40 @@ fun WeatherScreen(
     navigator: DestinationsNavigator
 ) {
     val context = LocalContext.current
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DarkBlue)
-        ) {
-            viewModel.state.weatherInfo?.let { weatherInfo ->
-                var mainWeatherData by remember {
-                    mutableStateOf(weatherInfo.currentWeatherData)
-                }
-                WeatherCard(
-                    weatherData = mainWeatherData,
-                    backgroundColor = DeepBlue,
-                    navigator = navigator,
-                    locationName = getLocationName(
-                        lat = viewModel.state.lat,
-                        long = viewModel.state.long,
-                        context = context
-                    )
+    BackPressHandler {
+        if (viewModel.state.error != "Press back again to exit app")
+            viewModel.setErrorMessage("Press back again to exit app")
+        else {
+            val activity = (context as? Activity)
+            activity?.finish()
+        }
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBlue)
+    ) {
+        viewModel.state.weatherInfo?.let { weatherInfo ->
+            var mainWeatherData by remember {
+                mutableStateOf(weatherInfo.currentWeatherData)
+            }
+            WeatherCard(
+                weatherData = mainWeatherData,
+                backgroundColor = DeepBlue,
+                navigator = navigator,
+                locationName = getLocationName(
+                    lat = viewModel.state.lat,
+                    long = viewModel.state.long,
+                    context = context
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                WeatherForecast(
-                    state = viewModel.state,
-                    selectedHourIndex = getCurrentHour()
-                ) {
-                    mainWeatherData = it
-                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            WeatherForecast(
+                state = viewModel.state,
+                selectedHourIndex = getCurrentHour()
+            ) {
+                mainWeatherData = it
             }
         }
+    }
 }
