@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.samuel.vikitechnicaltest.presentation.util.network.NetworkMonitor
 import com.samuelhky.weatherapp.domain.location.LocationTracker
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
@@ -20,7 +21,8 @@ private val TAG: String = "MainViewModelDebug"
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: WeatherRepository,
-    private val locationTracker: LocationTracker
+    private val locationTracker: LocationTracker,
+    val networkMonitor: NetworkMonitor
 ): ViewModel() {
 
     var state by mutableStateOf(MainState())
@@ -97,6 +99,10 @@ class MainViewModel @Inject constructor(
     }
     fun updateLocation(lat: Double, long: Double) {
         state = state.copy(lat = lat, long = long)
+    }
+
+    fun setErrorMessage(message: String) {
+        state = state.copy(error = message)
     }
 
     override fun toString(): String {

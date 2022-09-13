@@ -1,6 +1,7 @@
 package com.samuelhky.weatherapp.presentation
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,11 +11,12 @@ import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -25,6 +27,7 @@ import com.ramcosta.composedestinations.spec.NavHostEngine
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 private val TAG: String = "MainActivityDebug"
 
@@ -37,7 +40,9 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPermissions()
+        createPermissionsLauncher(viewModel::loadWeatherInfo)
+        if (!hasPermissions())
+            requestForPermissions()
         setContent {
             WeatherAppTheme {
                 val navController: NavHostController = rememberAnimatedNavController()
@@ -51,6 +56,7 @@ class MainActivity : ComponentActivity() {
                     engine = navHostEngine,
                     navController = navController
                 )
+                // Loading and error UI handling
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (viewModel.state.isLoading)
                         CircularProgressIndicator(
@@ -58,11 +64,9 @@ class MainActivity : ComponentActivity() {
                             color = DeepBlue
                         )
                     viewModel.state.error?.let { error ->
-                        ErrorCard(
+                        ShowError(
                             message = error,
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .fillMaxWidth(0.5f)
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
@@ -70,19 +74,47 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun requestPermissions() {
-        // create a contract for requesting permissions
+    private fun hasPermissions(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            application,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+            application,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun createPermissionsLauncher(callback: () -> Unit) {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ) {
-            // at this point, the user has been asked to give permissions, but whatever they choose, we can just call
-            // loadWeatherInfo(), because we handle all the cases for whether permissions were granted or not in there
-            viewModel.loadWeatherInfo()
-        }
-        // launch the permission (and call loadWeatherInfo())
+        ) { callback }
+    }
+
+    private fun requestForPermissions() {
         permissionLauncher.launch(arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // handle changes in network connection
+        lifecycleScope.launch {
+            viewModel.networkMonitor.isConnected.collect {
+                when (it) {
+                    true -> {
+                        if (!hasPermissions())
+                            requestForPermissions()
+                        else
+                            viewModel.loadWeatherInfo()
+                    }
+                    false -> {
+                        viewModel.setErrorMessage("No internet connection")
+                    }
+                }
+            }
+        }
     }
 }

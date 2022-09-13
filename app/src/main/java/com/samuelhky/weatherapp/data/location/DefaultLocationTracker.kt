@@ -23,21 +23,21 @@ class DefaultLocationTracker @Inject constructor(
 ): LocationTracker {
     @SuppressLint("MissingPermission")
     override suspend fun getCurrentLocation(): Resource<Location> {
-        val hasAccessFineLocationPermission = ContextCompat.checkSelfPermission(
-            application,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!hasAccessFineLocationPermission) return Resource.Error(
-            message = "Unable to access location. Please enable 'Fine Location Permission'"
-        )
-
-        val hasAccessCoarseLocationPermission = ContextCompat.checkSelfPermission(
-            application,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!hasAccessCoarseLocationPermission) return Resource.Error(
-            message = "Unable to access location. Please enable 'Coarse Location Permission'"
-        )
+//        val hasAccessFineLocationPermission = ContextCompat.checkSelfPermission(
+//            application,
+//            Manifest.permission.ACCESS_FINE_LOCATION
+//        ) == PackageManager.PERMISSION_GRANTED
+//        if (!hasAccessFineLocationPermission) return Resource.Error(
+//            message = "Unable to access location. Please enable 'Fine Location Permission'"
+//        )
+//
+//        val hasAccessCoarseLocationPermission = ContextCompat.checkSelfPermission(
+//            application,
+//            Manifest.permission.ACCESS_COARSE_LOCATION
+//        ) == PackageManager.PERMISSION_GRANTED
+//        if (!hasAccessCoarseLocationPermission) return Resource.Error(
+//            message = "Unable to access location. Please enable 'Coarse Location Permission'"
+//        )
 
         val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
