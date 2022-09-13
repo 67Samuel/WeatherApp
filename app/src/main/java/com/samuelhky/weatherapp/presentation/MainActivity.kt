@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -31,7 +30,6 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.spec.NavHostEngine
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.WeatherAppTheme
-import com.samuelhky.weatherapp.util.ui.BackPressHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

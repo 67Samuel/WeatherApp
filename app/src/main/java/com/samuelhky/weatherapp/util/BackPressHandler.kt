@@ -1,4 +1,4 @@
-package com.samuelhky.weatherapp.util.ui
+package com.samuelhky.weatherapp.util
 
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher

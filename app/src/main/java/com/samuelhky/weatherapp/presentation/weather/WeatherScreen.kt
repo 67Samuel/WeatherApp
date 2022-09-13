@@ -16,7 +16,7 @@ import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 import com.samuelhky.weatherapp.util.getCurrentHour
 import com.samuelhky.weatherapp.util.getLocationName
-import com.samuelhky.weatherapp.util.ui.BackPressHandler
+import com.samuelhky.weatherapp.util.BackPressHandler
 
 private val TAG: String = "WeatherScreenDebug"
 

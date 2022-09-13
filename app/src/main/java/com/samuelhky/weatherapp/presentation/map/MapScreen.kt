@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +25,13 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
-import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 import com.samuelhky.weatherapp.util.getLocationName
+import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 import kotlinx.coroutines.launch
 
-
+/**
+ * Taken from https://www.valueof.io/blog/intercept-back-press-button-in-jetpack-compose
+ */
 private val TAG: String = "MapScreenDebug"
 @Destination(style = ScreenTransitions::class)
 @Composable
