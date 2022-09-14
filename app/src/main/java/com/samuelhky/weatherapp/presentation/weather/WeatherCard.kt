@@ -64,7 +64,6 @@ fun WeatherCard(
             elevation = 5.dp,
             modifier = modifier
                 .padding(16.dp)
-                .height(430.dp) // about the height that accommodates all types of icons
         ) {
             Column(
                 modifier = Modifier
