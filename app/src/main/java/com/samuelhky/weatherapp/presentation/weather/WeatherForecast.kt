@@ -16,6 +16,7 @@ import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
+import com.samuelhky.weatherapp.util.getDayFromIndex
 import kotlinx.coroutines.launch
 
 private val TAG: String = "WeatherForecastDebug"
@@ -34,17 +35,15 @@ fun WeatherForecast(
         mutableStateOf(selectedHourIndex)
     }
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
 
-    // handle first day (today) only
-    state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
+    state.weatherInfo?.weatherDataPerDay?.flatMap { (_, v) -> v }?.let { data ->
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
             Text(
-                text = "Today",
+                text = getDayFromIndex(listState.firstVisibleItemIndex),
                 fontSize = 20.sp,
                 color = Color.White
             )
@@ -69,7 +68,8 @@ fun WeatherForecast(
                 },
             )
         }
-        scope.launch {
+
+        LaunchedEffect(true) {
             listState.animateScrollToItem(index = selectedIndex)
         }
     }

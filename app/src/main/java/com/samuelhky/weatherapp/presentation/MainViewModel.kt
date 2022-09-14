@@ -12,7 +12,6 @@ import com.samuelhky.weatherapp.domain.location.LocationTracker
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.domain.weather.WeatherData
-import com.samuelhky.weatherapp.domain.weather.WeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

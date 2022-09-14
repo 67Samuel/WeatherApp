@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.R.drawable
-import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.destinations.MapScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.SelectionGreen
