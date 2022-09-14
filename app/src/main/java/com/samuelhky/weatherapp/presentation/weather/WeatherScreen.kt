@@ -2,10 +2,7 @@ package com.samuelhky.weatherapp.presentation.weather
 
 import android.app.Activity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -57,14 +54,14 @@ fun WeatherScreen(
                         context = context
                     )
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.fillMaxSize().weight(1f))
                 WeatherForecast(
                     state = viewModel.state,
-                    selectedHourIndex = getCurrentHour()
+                    selectedHourIndex = getCurrentHour(),
+                    modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     viewModel.setCurrentWeatherData(it)
                 }
-
             }
         }
     }
