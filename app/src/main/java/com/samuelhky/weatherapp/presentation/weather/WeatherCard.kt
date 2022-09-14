@@ -1,5 +1,6 @@
 package com.samuelhky.weatherapp.presentation.weather
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.keyframes
@@ -23,20 +24,23 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.samuelhky.weatherapp.R.drawable
 import com.samuelhky.weatherapp.domain.weather.WeatherData
+import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.destinations.MapScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.SelectionGreen
 import com.samuelhky.weatherapp.presentation.ui.theme.TranslucentWhite
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
+private val TAG: String = "WeatherCardDebug"
 @Composable
 fun WeatherCard(
-    weatherData: WeatherData?,
+    state: MainState,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
     locationName: String
 ) {
+    Log.d(TAG, "WeatherCard: recomposing")
     var locationColorState by remember { mutableStateOf(Color.Unspecified) }
     val locationColor by animateColorAsState(
         targetValue = locationColorState,
@@ -47,8 +51,8 @@ fun WeatherCard(
             locationColorState at 2000
         }
     )
-    // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
-    weatherData?.let { data ->
+    state.weatherInfo?.currentWeatherData?.let { data ->
+        // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
         val formattedTime = remember(data) {
             data.time.format(
                 DateTimeFormatter.ofPattern("HH:mm")

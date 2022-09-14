@@ -40,56 +40,55 @@ fun MapScreen(
     viewModel: MainViewModel,
     navigator: DestinationsNavigator
 ) {
-    val selectedLocation = LatLng(viewModel.state.lat, viewModel.state.long)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(selectedLocation, 15f)
-    }
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DarkBlue)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Select location for weather report",
-            fontWeight = FontWeight.Bold,
-            fontSize = 23.sp,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-        Card(
-            shape = RoundedCornerShape(10.dp)
+    viewModel.state.latLng?.let { latLng ->
+        val selectedLocation = LatLng(latLng.latitude, latLng.longitude)
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(selectedLocation, 15f)
+        }
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(DarkBlue)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPositionState,
-                onMapClick = {
-                    scope.launch {
-                        viewModel.loadWeatherInfo(
-                            lat = it.latitude,
-                            long = it.longitude
-                        )
-                        viewModel.updateLocation(it.latitude, it.longitude)
-                        navigator.popBackStack()
-                    }
-                },
-                properties = MapProperties(isMyLocationEnabled = true)
+            Text(
+                text = "Select location for weather report",
+                fontWeight = FontWeight.Bold,
+                fontSize = 23.sp,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+            Card(
+                shape = RoundedCornerShape(10.dp)
             ) {
-                Marker(
-                    state = MarkerState(position = selectedLocation),
-                    title = "Selected Location",
-                    snippet = getLocationName(
-                        lat = viewModel.state.lat,
-                        long = viewModel.state.long,
-                        context = context
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPositionState,
+                    onMapClick = { newLatLng ->
+                        scope.launch {
+                            viewModel.loadWeatherInfo(newLatLng)
+                            viewModel.updateLocation(newLatLng)
+                            navigator.popBackStack()
+                        }
+                    },
+                    properties = MapProperties(isMyLocationEnabled = true)
+                ) {
+                    Marker(
+                        state = MarkerState(position = selectedLocation),
+                        title = "Selected Location",
+                        snippet = getLocationName(
+                            lat = latLng.latitude,
+                            long = latLng.longitude,
+                            context = context
                         )
-                )
+                    )
+                }
             }
         }
     }

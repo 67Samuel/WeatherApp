@@ -1,5 +1,6 @@
 package com.samuelhky.weatherapp.presentation.weather
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +18,7 @@ import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import kotlinx.coroutines.launch
 
+private val TAG: String = "WeatherForecastDebug"
 /**
  * The section of the weather list row and its title
  */
@@ -27,12 +29,14 @@ fun WeatherForecast(
     modifier: Modifier = Modifier,
     updateWeatherCard: (WeatherData) -> Unit,
 ) {
+    Log.d(TAG, "WeatherForecast: recomposing")
     var selectedIndex by remember {
         mutableStateOf(selectedHourIndex)
     }
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
+    // handle first day (today) only
     state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
         Column(
             modifier = modifier

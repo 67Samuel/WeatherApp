@@ -6,7 +6,7 @@ import com.samuelhky.weatherapp.data.remote.WeatherApi
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.domain.weather.WeatherInfo
-import java.lang.Exception
+import java.io.IOException
 import javax.inject.Inject
 
 private val TAG: String = "WeatherRepoImplDebug"
@@ -23,9 +23,13 @@ class WeatherRepositoryImpl @Inject constructor(
                     long = long
                 ).toWeatherInfo()
             )
+        } catch (e: IOException) {
+            Log.e(TAG, "getWeatherData IOException: ${e.message}")
+            Resource.Error(
+                message = "Network Error: Could not load updated weather info"
+            )
         } catch (e: Exception) {
-            Log.d(TAG, "getWeatherData: got error when trying to call api")
-            e.printStackTrace()
+            Log.e(TAG, "getWeatherData Exception: ${e.message}")
             Resource.Error(
                 message = e.message ?: "Unknown Error"
             )

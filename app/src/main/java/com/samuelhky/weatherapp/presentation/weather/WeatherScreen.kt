@@ -1,8 +1,12 @@
 package com.samuelhky.weatherapp.presentation.weather
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -10,13 +14,14 @@ import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.presentation.MainViewModel
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
-import com.samuelhky.weatherapp.util.ui.ScreenTransitions
+import com.samuelhky.weatherapp.util.BackPressHandler
 import com.samuelhky.weatherapp.util.getCurrentHour
 import com.samuelhky.weatherapp.util.getLocationName
-import com.samuelhky.weatherapp.util.BackPressHandler
+import com.samuelhky.weatherapp.util.ui.ScreenTransitions
 
 private val TAG: String = "WeatherScreenDebug"
 
@@ -43,25 +48,25 @@ fun WeatherScreen(
             .background(DarkBlue)
     ) {
         viewModel.state.weatherInfo?.let { weatherInfo ->
-            var mainWeatherData by remember {
-                mutableStateOf(weatherInfo.currentWeatherData)
-            }
-            WeatherCard(
-                weatherData = mainWeatherData,
-                backgroundColor = DeepBlue,
-                navigator = navigator,
-                locationName = getLocationName(
-                    lat = viewModel.state.lat,
-                    long = viewModel.state.long,
-                    context = context
+            viewModel.state.latLng?.let { latLng ->
+                WeatherCard(
+                    state = viewModel.state,
+                    backgroundColor = DeepBlue,
+                    navigator = navigator,
+                    locationName = getLocationName(
+                        lat = latLng.latitude,
+                        long = latLng.longitude,
+                        context = context
+                    )
                 )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            WeatherForecast(
-                state = viewModel.state,
-                selectedHourIndex = getCurrentHour()
-            ) {
-                mainWeatherData = it
+                Spacer(modifier = Modifier.height(16.dp))
+                WeatherForecast(
+                    state = viewModel.state,
+                    selectedHourIndex = getCurrentHour()
+                ) {
+                    viewModel.setCurrentWeatherData(it)
+                }
+
             }
         }
     }

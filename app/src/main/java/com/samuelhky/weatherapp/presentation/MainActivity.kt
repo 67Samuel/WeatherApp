@@ -3,6 +3,7 @@ package com.samuelhky.weatherapp.presentation
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate: viewModel: $viewModel")
         createPermissionsLauncher(viewModel::loadWeatherInfo)
         if (!hasPermissions())
             requestForPermissions()
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
     private fun createPermissionsLauncher(callback: () -> Unit) {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ) { callback }
+        ) { Log.d(TAG, "createPermissionsLauncher: finished getting permissions but not calling callback!") } // don't need callback because we already get data in onResume(?)
     }
 
     private fun requestForPermissions() {
@@ -109,6 +111,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume: viewModel: $viewModel")
         // handle changes in network connection
         lifecycleScope.launch {
             viewModel.networkMonitor.isConnected.collect {
@@ -116,8 +119,17 @@ class MainActivity : ComponentActivity() {
                     true -> {
                         if (!hasPermissions())
                             requestForPermissions()
-                        else
-                            viewModel.loadWeatherInfo()
+                        else {
+                            // if there is a saved LatLng, get location data based on that
+                            viewModel.state.latLng?.let { latLng ->
+                                viewModel.loadWeatherInfo(
+                                    latLng = latLng
+                                )
+                            } ?: run {
+                                // if there is no saved LatLng, get location data based on current location
+                                viewModel.loadWeatherInfo()
+                            }
+                        }
                     }
                     false -> {
                         viewModel.setErrorMessage("No internet connection")
