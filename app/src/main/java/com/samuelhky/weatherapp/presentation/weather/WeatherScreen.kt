@@ -32,6 +32,7 @@ fun WeatherScreen(
         if (viewModel.state.error != "Press back again to exit app")
             viewModel.setErrorMessage("Press back again to exit app")
         else {
+            viewModel.setErrorMessage(null)
             val activity = (context as? Activity)
             activity?.finish()
         }

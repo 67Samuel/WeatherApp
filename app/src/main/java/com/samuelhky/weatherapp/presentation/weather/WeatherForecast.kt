@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import com.samuelhky.weatherapp.domain.weather.WeatherData
 import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
+import kotlinx.coroutines.launch
 
 /**
  * The section of the weather list row and its title
@@ -28,6 +30,8 @@ fun WeatherForecast(
     var selectedIndex by remember {
         mutableStateOf(selectedHourIndex)
     }
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
     state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
         Column(
@@ -42,6 +46,7 @@ fun WeatherForecast(
             )
             Spacer(Modifier.height(16.dp))
             LazyRow(
+                state = listState,
                 content = {
                     itemsIndexed(data) { index, weatherData ->
                         HourlyWeatherListItem(
@@ -60,6 +65,8 @@ fun WeatherForecast(
                 },
             )
         }
-
+        scope.launch {
+            listState.animateScrollToItem(index = selectedIndex)
+        }
     }
 }

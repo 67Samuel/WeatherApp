@@ -100,7 +100,7 @@ class MainViewModel @Inject constructor(
         state = state.copy(lat = lat, long = long)
     }
 
-    fun setErrorMessage(message: String) {
+    fun setErrorMessage(message: String?) {
         state = state.copy(error = message)
     }
 
