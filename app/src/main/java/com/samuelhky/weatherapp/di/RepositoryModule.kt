@@ -1,6 +1,8 @@
 package com.samuelhky.weatherapp.di
 
+import com.samuelhky.weatherapp.data.repository.OneMapRepositoryImpl
 import com.samuelhky.weatherapp.data.repository.WeatherRepositoryImpl
+import com.samuelhky.weatherapp.domain.repository.OneMapRepository
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import dagger.Binds
 import dagger.Module
@@ -16,5 +18,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindLocationTracker(weatherRepositoryImpl: WeatherRepositoryImpl): WeatherRepository
+    abstract fun bindWeatherRepository(weatherRepositoryImpl: WeatherRepositoryImpl): WeatherRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOneMapRepository(oneMapRepositoryImpl: OneMapRepositoryImpl): OneMapRepository
 }

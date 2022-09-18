@@ -73,7 +73,6 @@ fun MapScreen(
                     onMapClick = { newLatLng ->
                         scope.launch {
                             viewModel.loadWeatherInfo(newLatLng)
-                            viewModel.updateLocation(newLatLng)
                             navigator.popBackStack()
                         }
                     },
@@ -82,11 +81,7 @@ fun MapScreen(
                     Marker(
                         state = MarkerState(position = selectedLocation),
                         title = "Selected Location",
-                        snippet = getLocationName(
-                            lat = latLng.latitude,
-                            long = latLng.longitude,
-                            context = context
-                        )
+                        snippet = viewModel.state.locationName
                     )
                 }
             }

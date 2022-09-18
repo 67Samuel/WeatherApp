@@ -8,11 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.samuel.vikitechnicaltest.presentation.util.network.NetworkMonitor
+import com.samuelhky.weatherapp.BuildConfig
 import com.samuelhky.weatherapp.domain.location.LocationTracker
+import com.samuelhky.weatherapp.domain.repository.OneMapRepository
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.domain.weather.WeatherData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +24,8 @@ private val TAG: String = "MainViewModelDebug"
 // We don't use use-cases/interactors here because that would be too much complexity for a simple app like this
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: WeatherRepository,
+    private val weatherRepository: WeatherRepository,
+    private val oneMapRepository: OneMapRepository,
     private val locationTracker: LocationTracker,
     val networkMonitor: NetworkMonitor
 ): ViewModel() {
@@ -47,7 +51,7 @@ class MainViewModel @Inject constructor(
                     return@launch
                 } else {
                     location.data?.let {
-                        state = when (val result = repository.getWeatherData(
+                        state = when (val result = weatherRepository.getWeatherData(
                             long = it.longitude,
                             lat = it.latitude)
                         ) {
@@ -68,6 +72,11 @@ class MainViewModel @Inject constructor(
                 }
                 Log.d(TAG, "loadWeatherInfo (no params): done loading weather info")
             }
+        }.invokeOnCompletion {
+            it?.printStackTrace()
+            state.latLng?.let { latLng ->
+                loadLocationName(latLng)
+            }
         }
     }
 
@@ -80,7 +89,7 @@ class MainViewModel @Inject constructor(
                 isLoading = true,
                 error = null,
             )
-            state = when (val result = repository.getWeatherData(
+            state = when (val result = weatherRepository.getWeatherData(
                 lat = lat,
                 long = long)
             ) {
@@ -106,7 +115,7 @@ class MainViewModel @Inject constructor(
                 isLoading = true,
                 error = null,
             )
-            state = when (val result = repository.getWeatherData(
+            state = when (val result = weatherRepository.getWeatherData(
                 lat = latLng.latitude,
                 long = latLng.longitude)
             ) {
@@ -119,6 +128,11 @@ class MainViewModel @Inject constructor(
                     isLoading = false,
                     error = result.message
                 )
+            }
+        }.invokeOnCompletion {
+            it?.printStackTrace()
+            state.latLng?.let { latLng ->
+                loadLocationName(latLng)
             }
         }
     }
@@ -148,6 +162,25 @@ class MainViewModel @Inject constructor(
             state = state.copy(weatherInfo = newWeatherInfo)
         } ?: run {
             Log.d(TAG, "setCurrentWeatherData: something strange happened. weatherInfo should always not be null by the time this function is called")
+        }
+    }
+
+    private fun loadLocationName(latLng: LatLng, token: String? = null) {
+        Log.d(TAG, "loadLocationName: called")
+        viewModelScope.launch {
+            state = when (val result = oneMapRepository.getLocationName(
+                latLng = latLng,
+                token = token ?: BuildConfig.ONEMAP_API_KEY)
+            ) {
+                is Resource.Success -> state.copy(
+                    isLoading = false,
+                    locationName = result.data
+                )
+                is Resource.Error -> state.copy(
+                    isLoading = false,
+                    error = result.message
+                )
+            }
         }
     }
 

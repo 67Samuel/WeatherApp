@@ -27,6 +27,7 @@ import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.destinations.MapScreenDestination
 import com.samuelhky.weatherapp.presentation.ui.theme.SelectionGreen
 import com.samuelhky.weatherapp.presentation.ui.theme.TranslucentWhite
+import com.samuelhky.weatherapp.util.toTitleCase
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -36,8 +37,7 @@ fun WeatherCard(
     state: MainState,
     backgroundColor: Color,
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator,
-    locationName: String
+    navigator: DestinationsNavigator
 ) {
     Log.d(TAG, "WeatherCard: recomposing")
     var locationColorState by remember { mutableStateOf(Color.Unspecified) }
@@ -51,125 +51,126 @@ fun WeatherCard(
         }
     )
     state.weatherInfo?.currentWeatherData?.let { data ->
-        // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
-        val formattedTime = remember(data) {
-            data.time.format(
-                DateTimeFormatter.ofPattern("HH:mm")
-            )
-        }
-        Card(
-            backgroundColor = backgroundColor,
-            shape = RoundedCornerShape(10.dp),
-            elevation = 5.dp,
-            modifier = modifier
-                .padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+        state.locationName?.let { locationName ->
+            // use remember to re-format the time only when weatherData changes instead of every time HourlyWeatherDisplay changes
+            val formattedTime = remember(data) {
+                data.time.format(
+                    DateTimeFormatter.ofPattern("HH:mm")
+                )
+            }
+            Card(
+                backgroundColor = backgroundColor,
+                shape = RoundedCornerShape(10.dp),
+                elevation = 5.dp,
+                modifier = modifier
+                    .padding(16.dp)
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Card(
-                            backgroundColor = TranslucentWhite,
-                            shape = RoundedCornerShape(5.dp),
-                            modifier = Modifier.fillMaxWidth(0.75f)
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
                         ) {
-                            Row(
-                                modifier = Modifier.padding(5.dp)
+                            Card(
+                                backgroundColor = TranslucentWhite,
+                                shape = RoundedCornerShape(5.dp),
+                                modifier = Modifier.fillMaxWidth(0.75f)
                             ) {
-                                Text(
-                                    text = locationName,
-                                    color = locationColor,
-                                    fontSize = 23.sp,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(end = 5.dp)
-                                        .clickable {
-                                            navigator.navigate(MapScreenDestination())
-                                        }
-                                )
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(id = drawable.ic_location_searching),
-                                    contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                Row(
+                                    modifier = Modifier.padding(5.dp)
+                                ) {
+                                    Text(
+                                        text = locationName.toTitleCase(),
+                                        color = locationColor,
+                                        fontSize = 23.sp,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 5.dp)
+                                            .clickable {
+                                                navigator.navigate(MapScreenDestination())
+                                            }
+                                    )
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = drawable.ic_location_searching),
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.align(Alignment.CenterVertically)
+                                    )
+                                }
+                            }
+                            Text(
+                                text = formattedTime,
+                                color = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Image(
+                            painter = painterResource(id = data.weatherType.iconRes),
+                            contentDescription = data.weatherType.weatherDesc,
+                            modifier = Modifier.width(200.dp)
+                        )
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        data.temperatureCelsius?.let {
+                            Text(
+                                text = "${it}°C",
+                                fontSize = 50.sp,
+                                color = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = data.weatherType.weatherDesc,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            data.pressure?.let {
+                                WeatherDataDisplay(
+                                    value = it.roundToInt(),
+                                    unit = "hpa",
+                                    icon = ImageVector.vectorResource(id = drawable.ic_pressure),
+                                    iconTint = Color.White,
+                                    textStyle = TextStyle(color = Color.White)
                                 )
                             }
-                        }
-                        Text(
-                            text = formattedTime,
-                            color = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Image(
-                        painter = painterResource(id = data.weatherType.iconRes),
-                        contentDescription = data.weatherType.weatherDesc,
-                        modifier = Modifier.width(200.dp)
-                    )
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    data.temperatureCelsius?.let {
-                        Text(
-                            text = "${it}°C",
-                            fontSize = 50.sp,
-                            color = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = data.weatherType.weatherDesc,
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        data.pressure?.let {
-                            WeatherDataDisplay(
-                                value = it.roundToInt(),
-                                unit = "hpa",
-                                icon = ImageVector.vectorResource(id = drawable.ic_pressure),
-                                iconTint = Color.White,
-                                textStyle = TextStyle(color = Color.White)
-                            )
-                        }
-                        data.humidity?.let {
-                            WeatherDataDisplay(
-                                value = it.roundToInt(),
-                                unit = "%",
-                                icon = ImageVector.vectorResource(id = drawable.ic_drop),
-                                iconTint = Color.White,
-                                textStyle = TextStyle(color = Color.White)
-                            )
-                        }
-                        data.windSpeed?.let {
-                            WeatherDataDisplay(
-                                value = it.roundToInt(),
-                                unit = "km/h",
-                                icon = ImageVector.vectorResource(id = drawable.ic_wind),
-                                iconTint = Color.White,
-                                textStyle = TextStyle(color = Color.White)
-                            )
+                            data.humidity?.let {
+                                WeatherDataDisplay(
+                                    value = it.roundToInt(),
+                                    unit = "%",
+                                    icon = ImageVector.vectorResource(id = drawable.ic_drop),
+                                    iconTint = Color.White,
+                                    textStyle = TextStyle(color = Color.White)
+                                )
+                            }
+                            data.windSpeed?.let {
+                                WeatherDataDisplay(
+                                    value = it.roundToInt(),
+                                    unit = "km/h",
+                                    icon = ImageVector.vectorResource(id = drawable.ic_wind),
+                                    iconTint = Color.White,
+                                    textStyle = TextStyle(color = Color.White)
+                                )
+                            }
                         }
                     }
                 }
             }
+            locationColorState = Color.White // animate location text
         }
-        locationColorState = Color.White // animate location text
     }
-
 }

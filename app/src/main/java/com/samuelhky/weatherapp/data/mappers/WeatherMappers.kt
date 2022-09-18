@@ -49,10 +49,6 @@ fun WeatherDto.toWeatherInfo(): WeatherInfo {
     val currentWeatherData = if (now.hour == 23 && now.minute > 30) weatherDataMap[1]?.get(0) else weatherDataMap[0]?.find {
         it.time.hour == getCurrentHour()
     }
-    Log.d(TAG, "toWeatherInfo: updated WeatherInfo to ${WeatherInfo(
-        weatherDataPerDay = weatherDataMap,
-        currentWeatherData = currentWeatherData
-    )}")
     return WeatherInfo(
         weatherDataPerDay = weatherDataMap,
         currentWeatherData = currentWeatherData

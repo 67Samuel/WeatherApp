@@ -42,25 +42,24 @@ fun WeatherScreen(
             .fillMaxSize()
             .background(DarkBlue)
     ) {
-        viewModel.state.weatherInfo?.let { weatherInfo ->
-            viewModel.state.latLng?.let { latLng ->
-                WeatherCard(
-                    state = viewModel.state,
-                    backgroundColor = DeepBlue,
-                    navigator = navigator,
-                    locationName = getLocationName(
-                        lat = latLng.latitude,
-                        long = latLng.longitude,
-                        context = context
-                    )
-                )
-                Spacer(modifier = Modifier.fillMaxSize().weight(1f))
-                WeatherForecast(
-                    state = viewModel.state,
-                    selectedHourIndex = getCurrentHour(),
-                    modifier = Modifier.padding(bottom = 32.dp)
-                ) {
-                    viewModel.setCurrentWeatherData(it)
+        viewModel.state.apply {
+            weatherInfo?.let { weatherInfo ->
+                latLng?.let { latLng ->
+                    locationName?.let {
+                        WeatherCard(
+                            state = viewModel.state,
+                            backgroundColor = DeepBlue,
+                            navigator = navigator
+                        )
+                    }
+                    Spacer(modifier = Modifier.fillMaxSize().weight(1f))
+                    WeatherForecast(
+                        state = viewModel.state,
+                        selectedHourIndex = getCurrentHour(),
+                        modifier = Modifier.padding(bottom = 32.dp)
+                    ) {
+                        viewModel.setCurrentWeatherData(it)
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.samuelhky.weatherapp.data.remote
 
+import com.samuelhky.weatherapp.BuildConfig
 import com.squareup.moshi.Json
 
 data class WeatherDto(

@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.samuelhky.weatherapp.data.remote.OneMapApi
 import com.samuelhky.weatherapp.data.remote.WeatherApi
 import dagger.Module
 import dagger.Provides
@@ -28,6 +29,16 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl("https://api.open-meteo.com/")
             .addConverterFactory(MoshiConverterFactory.create()) // parses Json to Dto
+            .build()
+            .create()
+    }
+
+    @Singleton
+    @Provides
+    fun providesOneMapApi(): OneMapApi {
+        return Retrofit.Builder()
+            .baseUrl("https://developers.onemap.sg/")
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create()
     }
