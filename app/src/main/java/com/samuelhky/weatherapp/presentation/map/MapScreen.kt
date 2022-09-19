@@ -73,7 +73,7 @@ fun MapScreen(
                     onMapClick = { newLatLng ->
                         scope.launch {
                             viewModel.loadWeatherInfo(newLatLng)
-                            viewModel.updateLocation(newLatLng)
+//                            viewModel.updateLocation(newLatLng)
                             navigator.popBackStack()
                         }
                     },

@@ -42,7 +42,7 @@ fun WeatherScreen(
             .fillMaxSize()
             .background(DarkBlue)
     ) {
-        viewModel.state.weatherInfo?.let { weatherInfo ->
+        viewModel.state.weatherInfo?.let {
             viewModel.state.latLng?.let { latLng ->
                 WeatherCard(
                     state = viewModel.state,

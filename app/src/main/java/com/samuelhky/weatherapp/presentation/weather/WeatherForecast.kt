@@ -17,6 +17,7 @@ import com.samuelhky.weatherapp.presentation.MainState
 import com.samuelhky.weatherapp.presentation.ui.theme.DarkBlue
 import com.samuelhky.weatherapp.presentation.ui.theme.DeepBlue
 import com.samuelhky.weatherapp.util.getDayFromIndex
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val TAG: String = "WeatherForecastDebug"

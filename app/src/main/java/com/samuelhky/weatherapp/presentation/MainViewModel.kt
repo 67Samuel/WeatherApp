@@ -72,39 +72,15 @@ class MainViewModel @Inject constructor(
     }
 
     /**
-     * Loads weather info using given lat and long
-     */
-    fun loadWeatherInfo(lat: Double, long: Double) {
-        viewModelScope.launch {
-            state = state.copy(
-                isLoading = true,
-                error = null,
-            )
-            state = when (val result = repository.getWeatherData(
-                lat = lat,
-                long = long)
-            ) {
-                is Resource.Success -> state.copy(
-                    isLoading = false,
-                    weatherInfo = result.data,
-                    latLng = LatLng(lat, long)
-                )
-                is Resource.Error -> state.copy(
-                    isLoading = false,
-                    error = result.message
-                )
-            }
-        }
-    }
-
-    /**
      * Loads weather info using given LatLng
      */
     fun loadWeatherInfo(latLng: LatLng) {
         viewModelScope.launch {
+            val oldLatLng = state.latLng
             state = state.copy(
                 isLoading = true,
                 error = null,
+                latLng = latLng
             )
             state = when (val result = repository.getWeatherData(
                 lat = latLng.latitude,
@@ -112,22 +88,15 @@ class MainViewModel @Inject constructor(
             ) {
                 is Resource.Success -> state.copy(
                     isLoading = false,
-                    weatherInfo = result.data,
-                    latLng = latLng
+                    weatherInfo = result.data
                 )
                 is Resource.Error -> state.copy(
                     isLoading = false,
-                    error = result.message
+                    error = result.message,
+                    latLng = oldLatLng
                 )
             }
         }
-    }
-
-    /**
-     * Update location using lat and long
-     */
-    fun updateLocation(lat: Double, long: Double) {
-        state = state.copy(latLng = LatLng(lat, long))
     }
 
     /**
