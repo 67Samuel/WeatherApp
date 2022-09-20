@@ -27,8 +27,8 @@ class MainViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val oneMapRepository: OneMapRepository,
     private val locationTracker: LocationTracker,
-    val networkMonitor: NetworkMonitor
-): ViewModel() {
+    val networkMonitor: NetworkMonitor,
+) : ViewModel() {
 
     var state by mutableStateOf(MainState())
         private set // only this ViewModel can edit this state
@@ -56,7 +56,8 @@ class MainViewModel @Inject constructor(
                             lat = it.latitude)
                         ) {
                             is Resource.Success -> {
-                                Log.d(TAG, "loadWeatherInfo (no params): got weatherInfo: lat: ${it.latitude}\nlong: ${it.longitude}")
+                                Log.d(TAG,
+                                    "loadWeatherInfo (no params): got weatherInfo: lat: ${it.latitude}\nlong: ${it.longitude}")
                                 state.copy(
                                     isLoading = false,
                                     weatherInfo = result.data,
@@ -156,7 +157,8 @@ class MainViewModel @Inject constructor(
             val newWeatherInfo = weatherInfo.copy(currentWeatherData = data)
             state = state.copy(weatherInfo = newWeatherInfo)
         } ?: run {
-            Log.d(TAG, "setCurrentWeatherData: something strange happened. weatherInfo should always not be null by the time this function is called")
+            Log.d(TAG,
+                "setCurrentWeatherData: something strange happened. weatherInfo should always not be null by the time this function is called")
         }
     }
 

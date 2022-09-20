@@ -7,7 +7,8 @@ import java.io.IOException
 
 private val TAG: String = "LocationUtilsDebug"
 fun getLocationName(lat: Double, long: Double, context: Context): String {
-    var name = "lat: ${String.format("%.3f", lat)}, long: ${String.format("%.3f", long)}"
+    Log.d(TAG, "getLocationName: called")
+    var name = latLngToString(lat, long)
     try {
         if (Geocoder.isPresent()) {
             val locationList =

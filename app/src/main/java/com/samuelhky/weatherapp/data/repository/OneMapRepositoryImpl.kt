@@ -1,6 +1,8 @@
 package com.samuelhky.weatherapp.data.repository
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.currentCompositionLocalContext
 import com.google.android.gms.maps.model.LatLng
 import com.samuelhky.weatherapp.data.mappers.toLocationName
 import com.samuelhky.weatherapp.data.remote.OneMapApi
@@ -8,7 +10,9 @@ import com.samuelhky.weatherapp.data.util.GeocodeInfoException
 import com.samuelhky.weatherapp.domain.repository.OneMapRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.util.latLngToString
+import kotlinx.coroutines.currentCoroutineContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 import kotlin.math.roundToInt
 
 private val TAG: String = "OneMapRepoDebug"
@@ -20,7 +24,7 @@ class OneMapRepositoryImpl @Inject constructor(
         return try {
             Resource.Success(
                 data = api.getLocationName(
-                    location = "${latLng.latitude},${latLng.longitude}",
+                    location = "${latLng.latitude},${latLng.longitude}", // must conform to url format
                     token = token
                 ).toLocationName()
             )

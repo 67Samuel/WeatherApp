@@ -45,7 +45,6 @@ fun MapScreen(
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(selectedLocation, 15f)
         }
-        val context = LocalContext.current
         val scope = rememberCoroutineScope()
         Column(
             modifier = modifier
