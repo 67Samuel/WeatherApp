@@ -111,9 +111,11 @@ class MainViewModel @Inject constructor(
      */
     fun loadWeatherInfo(latLng: LatLng) {
         viewModelScope.launch {
+            val oldLatLng = state.latLng
             state = state.copy(
                 isLoading = true,
                 error = null,
+                latLng = latLng
             )
             state = when (val result = weatherRepository.getWeatherData(
                 lat = latLng.latitude,
@@ -121,12 +123,12 @@ class MainViewModel @Inject constructor(
             ) {
                 is Resource.Success -> state.copy(
                     isLoading = false,
-                    weatherInfo = result.data,
-                    latLng = latLng
+                    weatherInfo = result.data
                 )
                 is Resource.Error -> state.copy(
                     isLoading = false,
-                    error = result.message
+                    error = result.message,
+                    latLng = oldLatLng
                 )
             }
         }.invokeOnCompletion {
@@ -135,13 +137,6 @@ class MainViewModel @Inject constructor(
                 loadLocationName(latLng)
             }
         }
-    }
-
-    /**
-     * Update location using lat and long
-     */
-    fun updateLocation(lat: Double, long: Double) {
-        state = state.copy(latLng = LatLng(lat, long))
     }
 
     /**
