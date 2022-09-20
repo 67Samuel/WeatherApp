@@ -6,6 +6,7 @@ import com.samuelhky.weatherapp.data.remote.WeatherApi
 import com.samuelhky.weatherapp.domain.repository.WeatherRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.domain.weather.WeatherInfo
+import kotlinx.coroutines.delay
 import java.io.IOException
 import javax.inject.Inject
 
@@ -24,11 +25,13 @@ class WeatherRepositoryImpl @Inject constructor(
                 ).toWeatherInfo()
             )
         } catch (e: IOException) {
+            e.printStackTrace()
             Log.e(TAG, "getWeatherData IOException: ${e.message}")
             Resource.Error(
                 message = "Network Error: Could not load updated weather info"
             )
         } catch (e: Exception) {
+            e.printStackTrace()
             Log.e(TAG, "getWeatherData Exception: ${e.message}")
             Resource.Error(
                 message = e.message ?: "Unknown Error"

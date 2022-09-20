@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
     private fun createPermissionsLauncher(callback: () -> Unit) {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ) { Log.d(TAG, "createPermissionsLauncher: finished getting permissions but not calling callback!") } // don't need callback because we already get data in onResume(?)
+        ) { Log.d(TAG, "createPermissionsLauncher: finished getting permissions") } // don't need callback because we already get data in onResume(?)
     }
 
     private fun requestForPermissions() {

@@ -31,7 +31,6 @@ fun WeatherForecast(
     modifier: Modifier = Modifier,
     updateWeatherCard: (WeatherData) -> Unit,
 ) {
-    Log.d(TAG, "WeatherForecast: recomposing")
     var selectedIndex by remember {
         mutableStateOf(selectedHourIndex)
     }
