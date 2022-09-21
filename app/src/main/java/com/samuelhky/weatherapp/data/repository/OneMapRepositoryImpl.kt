@@ -4,11 +4,9 @@ import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.samuelhky.weatherapp.data.mappers.toLocationName
 import com.samuelhky.weatherapp.data.remote.OneMapApi
-import com.samuelhky.weatherapp.data.util.GeocodeInfoException
 import com.samuelhky.weatherapp.domain.repository.OneMapRepository
 import com.samuelhky.weatherapp.domain.util.Resource
 import com.samuelhky.weatherapp.util.Constants
-import com.samuelhky.weatherapp.util.latLngToString
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -26,15 +24,14 @@ class OneMapRepositoryImpl @Inject constructor(
                 ).toLocationName()
             )
         } catch (e: HttpException) {
-            Log.e(TAG, "getLocationName: HTTP exception, likely because coords are outside SG domain. Defaulting to Google Geocoder", )
-            e.printStackTrace()
+            Log.e(TAG, "getLocationName: HTTP exception, likely because coordinates are outside SG domain. Defaulting to Google Geocoder", e)
             Resource.Success(
                 data = Constants.ONEMAP_UNKNOWN_LOCATION
             )
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "getLocationName: ", e)
             Resource.Error(
-                message = e.message ?: "Unknown error when calling OneMap Api"
+                message = "Unknown error when calling OneMap Api"
             )
         }
     }

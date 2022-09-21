@@ -56,8 +56,6 @@ class MainViewModel @Inject constructor(
                             lat = it.latitude)
                         ) {
                             is Resource.Success -> {
-                                Log.d(TAG,
-                                    "loadWeatherInfo (no params): got weatherInfo: lat: ${it.latitude}\nlong: ${it.longitude}")
                                 state.copy(
                                     isLoading = false,
                                     weatherInfo = result.data,
@@ -65,7 +63,6 @@ class MainViewModel @Inject constructor(
                                 )
                             }
                             is Resource.Error -> {
-                                Log.d(TAG, "loadWeatherInfo: error: ${result.message}")
                                 state.copy(
                                     isLoading = false,
                                     error = result.message
@@ -74,7 +71,6 @@ class MainViewModel @Inject constructor(
                         }
                     }
                 }
-                Log.d(TAG, "loadWeatherInfo (no params): done loading weather info")
             }
         }.invokeOnCompletion {
             it?.printStackTrace()
@@ -85,37 +81,10 @@ class MainViewModel @Inject constructor(
     }
 
     /**
-     * Loads weather info using given lat and long
-     */
-    fun loadWeatherInfo(lat: Double, long: Double) {
-        viewModelScope.launch {
-            state = state.copy(
-                isLoading = true,
-                error = null,
-            )
-            state = when (val result = weatherRepository.getWeatherData(
-                lat = lat,
-                long = long)
-            ) {
-                is Resource.Success -> state.copy(
-                    isLoading = false,
-                    weatherInfo = result.data,
-                    latLng = LatLng(lat, long)
-                )
-                is Resource.Error -> state.copy(
-                    isLoading = false,
-                    error = result.message
-                )
-            }
-        }
-    }
-
-    /**
      * Loads weather info using given LatLng
      */
     fun loadWeatherInfo(latLng: LatLng) {
         viewModelScope.launch {
-//            val oldLatLng = state.latLng
             state = state.copy(
                 isLoading = true,
                 error = null,
@@ -132,7 +101,6 @@ class MainViewModel @Inject constructor(
                 is Resource.Error -> state.copy(
                     isLoading = false,
                     error = result.message,
-//                    latLng = oldLatLng
                 )
             }
         }.invokeOnCompletion {
@@ -141,13 +109,6 @@ class MainViewModel @Inject constructor(
                 loadLocationName(latLng)
             }
         }
-    }
-
-    /**
-     * Update location using LatLng
-     */
-    fun updateLocation(latLng: LatLng) {
-        state = state.copy(latLng = latLng)
     }
 
     fun setErrorMessage(message: String?) {

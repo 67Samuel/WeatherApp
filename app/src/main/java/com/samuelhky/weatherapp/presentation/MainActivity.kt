@@ -45,8 +45,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: viewModel: $viewModel")
-        createPermissionsLauncher(viewModel::loadWeatherInfo)
+        createPermissionsLauncher()
         if (!hasPermissions())
             requestForPermissions()
         setContent {
@@ -96,10 +95,10 @@ class MainActivity : ComponentActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun createPermissionsLauncher(callback: () -> Unit) {
+    private fun createPermissionsLauncher() {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ) { Log.d(TAG, "createPermissionsLauncher: finished getting permissions") } // don't need callback because we already get data in onResume(?)
+        ) {}
     }
 
     private fun requestForPermissions() {
@@ -111,13 +110,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume: viewModel: $viewModel")
         // handle changes in network connection
         lifecycleScope.launch {
             viewModel.networkMonitor.isConnected.collect {
                 when (it) {
                     true -> {
-                        Log.d(TAG, "onResume: Gained internet connection!")
                         if (!hasPermissions())
                             requestForPermissions()
                         else {

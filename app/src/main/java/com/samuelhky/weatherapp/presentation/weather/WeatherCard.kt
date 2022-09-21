@@ -44,7 +44,6 @@ fun WeatherCard(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
 ) {
-    Log.d(TAG, "WeatherCard: recomposing")
     val context = LocalContext.current
     var locationColorState by remember { mutableStateOf(Color.Unspecified) }
     val locationColor by animateColorAsState(

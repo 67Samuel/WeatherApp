@@ -15,18 +15,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 android {
     signingConfigs {
-        debug {
-            storeFile file('D:\\AndroidStudio\\Projects\\WeatherAppKeystore.jks')
-            storePassword 'aJwk+iMMlh;@yM45h.x#'
-            keyAlias 'key0'
-            keyPassword 'aJwk+iMMlh;@yM45h.x#'
-        }
-        release {
-            storeFile file('D:\\AndroidStudio\\Projects\\WeatherAppKeystore.jks')
-            storePassword 'aJwk+iMMlh;@yM45h.x#'
-            keyPassword 'aJwk+iMMlh;@yM45h.x#'
-            keyAlias 'key0'
-        }
+        debug
+        release
     }
     compileSdk 32
 
@@ -127,6 +117,40 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3"
 
     // Leak Canary
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 
+}
+
+
+// handle adding protected signing for builds
+def Properties props = new Properties()
+def propFile = new File('signing.properties')
+if (propFile.canRead()){
+    props.load(new FileInputStream(propFile))
+
+    if (props!=null && props.containsKey('RELEASE_STORE_FILE') && props.containsKey('RELEASE_STORE_PASSWORD') &&
+            props.containsKey('RELEASE_KEY_ALIAS') && props.containsKey('RELEASE_KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['RELEASE_STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['RELEASE_STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['RELEASE_KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['RELEASE_KEY_PASSWORD']
+    } else {
+        println 'signing.properties found but some entries are missing for release build'
+        android.buildTypes.release.signingConfig = null
+    }
+
+    if (props!=null && props.containsKey('DEBUG_STORE_FILE') && props.containsKey('DEBUG_STORE_PASSWORD') &&
+            props.containsKey('DEBUG_KEY_ALIAS') && props.containsKey('DEBUG_KEY_PASSWORD')) {
+        android.signingConfigs.release.storeFile = file(props['DEBUG_STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['DEBUG_STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['DEBUG_KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['DEBUG_KEY_PASSWORD']
+    } else {
+        println 'signing.properties found but some entries are missing for debug build'
+        android.buildTypes.debug.signingConfig = null
+    }
+}else {
+    println 'signing.properties not found'
+    android.buildTypes.release.signingConfig = null
+    android.buildTypes.debug.signingConfig = null
 }
