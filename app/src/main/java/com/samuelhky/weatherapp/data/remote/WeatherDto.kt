@@ -1,6 +1,5 @@
 package com.samuelhky.weatherapp.data.remote
 
-import com.samuelhky.weatherapp.BuildConfig
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
