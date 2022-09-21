@@ -1,19 +1,16 @@
 package com.samuelhky.weatherapp.data.repository
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.currentCompositionLocalContext
 import com.google.android.gms.maps.model.LatLng
 import com.samuelhky.weatherapp.data.mappers.toLocationName
 import com.samuelhky.weatherapp.data.remote.OneMapApi
 import com.samuelhky.weatherapp.data.util.GeocodeInfoException
 import com.samuelhky.weatherapp.domain.repository.OneMapRepository
 import com.samuelhky.weatherapp.domain.util.Resource
+import com.samuelhky.weatherapp.util.Constants
 import com.samuelhky.weatherapp.util.latLngToString
-import kotlinx.coroutines.currentCoroutineContext
+import retrofit2.HttpException
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
-import kotlin.math.roundToInt
 
 private val TAG: String = "OneMapRepoDebug"
 class OneMapRepositoryImpl @Inject constructor(
@@ -28,11 +25,11 @@ class OneMapRepositoryImpl @Inject constructor(
                     token = token
                 ).toLocationName()
             )
-        } catch (e: GeocodeInfoException) {
+        } catch (e: HttpException) {
+            Log.e(TAG, "getLocationName: HTTP exception, likely because coords are outside SG domain. Defaulting to Google Geocoder", )
             e.printStackTrace()
-            // no nearby buildings/roads => display lat/lng
             Resource.Success(
-                data = latLngToString(latLng.latitude, latLng.longitude)
+                data = Constants.ONEMAP_UNKNOWN_LOCATION
             )
         } catch (e: Exception) {
             e.printStackTrace()

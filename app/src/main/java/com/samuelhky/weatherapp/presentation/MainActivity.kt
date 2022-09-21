@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
             viewModel.networkMonitor.isConnected.collect {
                 when (it) {
                     true -> {
+                        Log.d(TAG, "onResume: Gained internet connection!")
                         if (!hasPermissions())
                             requestForPermissions()
                         else {
