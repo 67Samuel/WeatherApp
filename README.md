@@ -1,5 +1,5 @@
 # WeatherApp
-This is a Weather App based on and extended from philipplackner's version.
+This is a Weather App based on and extended from [philipplackner's version](https://github.com/philipplackner/WeatherApp).
 
 ## Features
 - Provides hourly weather information for 7 days from [Open Meteo](https://open-meteo.com/en)
@@ -22,3 +22,7 @@ This is a Weather App based on and extended from philipplackner's version.
 > I used OneMap reverse geocoding API to get better names for buildings/roads in Singapore.
 > This API requires an access token that is supposed to expire in 3 days (It worked for at least 2 additional days for me before I changed it).
 > It sometimes throws an HTTP 400 error, and I suspect that it is because the latitude and longitude values provided are not handled by OneMap since it is only focused on Singapore.
+
+## TODOs
+- Add refresh ability to update the weather data in WeatherScreen
+- Add additional datasources for weather data for aggregation and/or redundancy
