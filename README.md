@@ -26,3 +26,4 @@ This is a Weather App based on and extended from [philipplackner's version](http
 ## TODOs
 - Add refresh ability to update the weather data in WeatherScreen
 - Add additional datasources for weather data for aggregation and/or redundancy
+- Save map zoom state
